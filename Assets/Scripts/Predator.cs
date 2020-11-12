@@ -17,14 +17,25 @@ public class Predator : Life
 
     #region Variables
     [Header("Predator Stats")]
+    public float speed;
     public GameObject[] PredatorWaypoints;
     public PredatorState state;
     public bool ChangeState = false;
-    [Space]
+    public float minDist = 0.5f;
     public int index = 0;
-    public float speed;
-    public RangeInt atkRange; //would be 10
-    public RangeInt seekRange; //would be 15
+
+    [Space]
+
+    [Header("Predator Health")]
+    
+
+    [Header("State Stats")]
+    public float fleeRange = 5f;
+    public float atkRange = 10f; 
+    public float seekRange = 15f;
+
+    [Header("Reference to Prey")]
+    public GameObject prey;
     #endregion
 
     #region Functions
@@ -49,6 +60,20 @@ public class Predator : Life
     {
         transform.position = Vector2.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
     }
+
+    public void PredatorWander() //Make Predator go to waypoints
+    {
+        float distance = Vector2.Distance(transform.position, PredatorWaypoints[index].transform.position);
+
+        if(distance < minDist)
+        {
+            index++;
+        }
+        if(index >= PredatorWaypoints.Length) 
+        {
+            MovePredator(PredatorWaypoints[index].transform.position); //go to waypoints 1-3
+        }
+    }
     #endregion
 
     #region States
@@ -65,17 +90,18 @@ public class Predator : Life
     IEnumerator WanderState() //Wander to attack
     {
         print("Wander: Enter");
+        
         while (state == PredatorState.Wander)
         {
+            PredatorWander();
             //To Change States(From Wander to Attack, if prey hide state, then seek)
             if (ChangeState == false)
             {
                 state = PredatorState.Wander; //changing states
             }
-            
+            MovePredator(PredatorWaypoints[index].transform.position);
             yield return 0;
         }
-        MovePredator(PredatorWaypoints[index].transform.position);
         print("Wander: Exit");
         NextState();
     }
