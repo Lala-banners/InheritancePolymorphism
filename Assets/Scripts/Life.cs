@@ -16,13 +16,11 @@ public class Life : MonoBehaviour
 
     #region Variables
     public GameObject[] Obstacles;
+    //public GameObject[] Prey;
     
     #endregion
 
     #region Functions
-
-
-
     void Start()
     {
 

@@ -71,8 +71,9 @@ public class Predator : Life
         }
         if(index >= PredatorWaypoints.Length) 
         {
-            MovePredator(PredatorWaypoints[index].transform.position); //go to waypoints 1-3
+            index = 0;
         }
+        MovePredator(PredatorWaypoints[index].transform.position); //go to waypoints 1-3
     }
     #endregion
 

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Prey : Life
 {
+    
+
     #region Prey AI Requirements
     /*
      * Flock, make flock point as goal, make function for completion of prey going to goal (print message)
@@ -17,7 +19,30 @@ public class Prey : Life
     public GameObject[] PreyWaypoints;
     public PreyState state;
     public bool ChangeState = false;
+    public float preySpeed = 5f;
+    public int index = 0;
+    public float minDist = 0.5f;
     #endregion
+
+    public void MovePrey(Vector2 targetPos)
+    {
+        transform.position = Vector2.MoveTowards(transform.position, targetPos, preySpeed * Time.deltaTime);
+    }
+
+    public void PreyWander()
+    {
+        float distance = Vector2.Distance(transform.position, PreyWaypoints[index].transform.position);
+
+        if (distance < minDist)
+        {
+            index++;
+        }
+        if (index >= PreyWaypoints.Length)
+        {
+            index = 0;
+        }
+        MovePrey(PreyWaypoints[index].transform.position); //go to waypoints 1-3
+    }
 
     #region States
     public enum PreyState
@@ -27,6 +52,7 @@ public class Prey : Life
         Evade,
         Hide
     }
+
     IEnumerator FlockState() 
     {
         print("Flock: Enter");
@@ -40,12 +66,17 @@ public class Prey : Life
         NextState();
     }
 
-    IEnumerator Wandertate() //Seek prey if in seek range
+    IEnumerator WanderState() // wander around the waypoints
     {
         print("Wander: Enter");
         while (state == PreyState.Wander)
         {
-            
+            PreyWander();
+            if(ChangeState == false)
+            {
+                state = PreyState.Wander;
+            }
+            MovePrey(PreyWaypoints[index].transform.position);
             yield return 0;
         }
         print("Wander: Exit");
